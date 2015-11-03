@@ -17,9 +17,34 @@ Credit: Thomas Hood's poem "The Elm Tree"
 
 -}
 
+title message times =
+  message ++ " "
+  |> String.toUpper
+  |> String.repeat times
+  |> String.trimRight
+  |> Html.text
+
+
+triple number =
+  number * 3
+
+
+multiply x y =
+  x * y
+
+
+greet name colour food animal =
+  name ++ "'s favourites are: " ++ colour ++ " " ++ food ++ " " ++ animal
+
+
 main =
---    Html.text (String.repeat 3 (String.toUpper "bingo!"))
-    "bingo!"
-        |> String.toUpper
-        |> String.repeat 3
-        |> Html.text
+  -- title "bingo!" 3
+  -- triple 4
+  --   |> toString
+  --   |> Html.text
+  -- multiply 3 3
+  --   |> toString
+  --   |> Html.text
+  greet "Larry" "Blue" "Chocolate" "Lizard"
+    |> Html.text
+
