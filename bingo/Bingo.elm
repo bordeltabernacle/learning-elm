@@ -1,7 +1,7 @@
 module Bingo where
 
-import Html
-import String
+import Html exposing (..)
+import String exposing (toUpper, repeat, trimRight)
 
 {-
 
@@ -19,10 +19,10 @@ Credit: Thomas Hood's poem "The Elm Tree"
 
 title message times =
   message ++ " "
-  |> String.toUpper
-  |> String.repeat times
-  |> String.trimRight
-  |> Html.text
+  |> toUpper
+  |> repeat times
+  |> trimRight
+  |> text
 
 
 triple number =
@@ -41,10 +41,10 @@ main =
   -- title "bingo!" 3
   -- triple 4
   --   |> toString
-  --   |> Html.text
+  --   |> text
   -- multiply 3 3
   --   |> toString
-  --   |> Html.text
+  --   |> text
   greet "Larry" "Blue" "Chocolate" "Lizard"
-    |> Html.text
+    |> text
 
