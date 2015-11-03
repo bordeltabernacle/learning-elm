@@ -1,6 +1,8 @@
 module Bingo where
 
 import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import String exposing (toUpper, repeat, trimRight)
 
 {-
@@ -24,27 +26,18 @@ title message times =
   |> trimRight
   |> text
 
+pageHeader =
+  h1 [ ] [ title "bingo!" 3 ]
 
-triple number =
-  number * 3
+pageFooter =
+  footer [ ]
+    [ a [ href "http://pragmaticstudio.com" ]
+        [ text "The Pragmatic Studio"]
+    ]
 
-
-multiply x y =
-  x * y
-
-
-greet name colour food animal =
-  name ++ "'s favourites are: " ++ colour ++ " " ++ food ++ " " ++ animal
+view =
+  div [ id "container" ] [ pageHeader, pageFooter ]
 
 
 main =
-  -- title "bingo!" 3
-  -- triple 4
-  --   |> toString
-  --   |> text
-  -- multiply 3 3
-  --   |> toString
-  --   |> text
-  greet "Larry" "Blue" "Chocolate" "Lizard"
-    |> text
-
+  view
