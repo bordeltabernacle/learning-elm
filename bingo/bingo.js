@@ -329,6 +329,25 @@ Elm.Bingo.make = function (_elm) {
                    ,entryList(model.entries)
                    ,pageFooter]));
    };
+   var update = F2(function (action,
+   model) {
+      return function () {
+         switch (action.ctor)
+         {case "NoOp": return model;
+            case "Sort":
+            return _U.replace([["entries"
+                               ,A2($List.sortBy,
+                               function (_) {
+                                  return _.points;
+                               },
+                               model.entries)]],
+              model);}
+         _U.badCase($moduleName,
+         "between lines 35 and 40");
+      }();
+   });
+   var Sort = {ctor: "Sort"};
+   var NoOp = {ctor: "NoOp"};
    var newEntry = F3(function (phrase,
    points,
    id) {
@@ -359,10 +378,15 @@ Elm.Bingo.make = function (_elm) {
                                              "RockStar Ninja",
                                              500,
                                              5)])};
-   var main = view(initialModel);
+   var main = view(A2(update,
+   Sort,
+   initialModel));
    _elm.Bingo.values = {_op: _op
                        ,newEntry: newEntry
                        ,initialModel: initialModel
+                       ,NoOp: NoOp
+                       ,Sort: Sort
+                       ,update: update
                        ,title: title
                        ,pageHeader: pageHeader
                        ,pageFooter: pageFooter
