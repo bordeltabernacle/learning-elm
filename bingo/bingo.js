@@ -289,26 +289,16 @@ Elm.Bingo.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $String = Elm.String.make(_elm);
-   var entryItem = F2(function (phrase,
-   points) {
+   var entryItem = function (entry) {
       return A2($Html.li,
       _L.fromArray([]),
       _L.fromArray([A2($Html.span,
                    _L.fromArray([$Html$Attributes.$class("phrase")]),
-                   _L.fromArray([$Html.text(phrase)]))
+                   _L.fromArray([$Html.text(entry.phrase)]))
                    ,A2($Html.span,
                    _L.fromArray([$Html$Attributes.$class("points")]),
-                   _L.fromArray([$Html.text($Basics.toString(points))]))]));
-   });
-   var entryList = A2($Html.ul,
-   _L.fromArray([]),
-   _L.fromArray([A2(entryItem,
-                "Future-Proof",
-                100)
-                ,A2(entryItem,"Doing Agile",200)
-                ,A2(entryItem,
-                "Network Automation",
-                250)]));
+                   _L.fromArray([$Html.text($Basics.toString(entry.points))]))]));
+   };
    var pageFooter = A2($Html.footer,
    _L.fromArray([]),
    _L.fromArray([A2($Html.a,
@@ -325,6 +315,29 @@ Elm.Bingo.make = function (_elm) {
    _L.fromArray([A2(title,
    "bingo!",
    3)]));
+   var newEntry = F3(function (phrase,
+   points,
+   id) {
+      return {_: {}
+             ,id: id
+             ,phrase: phrase
+             ,points: points
+             ,wasSpoken: false};
+   });
+   var entryList = A2($Html.ul,
+   _L.fromArray([]),
+   _L.fromArray([entryItem(A3(newEntry,
+                "Future-Proof",
+                100,
+                1))
+                ,entryItem(A3(newEntry,
+                "Doing Agile",
+                200,
+                2))
+                ,entryItem(A3(newEntry,
+                "Network Automation",
+                250,
+                3))]));
    var view = A2($Html.div,
    _L.fromArray([$Html$Attributes.id("container")]),
    _L.fromArray([pageHeader
@@ -332,6 +345,7 @@ Elm.Bingo.make = function (_elm) {
                 ,pageFooter]));
    var main = view;
    _elm.Bingo.values = {_op: _op
+                       ,newEntry: newEntry
                        ,title: title
                        ,pageHeader: pageHeader
                        ,pageFooter: pageFooter
