@@ -76,4 +76,7 @@ view model =
 -- WIRE IT ALL TOGETHER
 
 main =
-  view (update Sort initialModel)
+--  view (update Sort initialModel)
+  initialModel
+    |> update Sort
+    |> view
