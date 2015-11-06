@@ -1,3 +1,5 @@
-*/elm-stuff/packages/*
-*/elm-stuff/build-artifacts/*
+elm-stuff/packages/*
+elm-stuff/build-artifacts/*
 */node_modules/*
+*/bingo/elm-stuff/packages/*
+*/bingo/elm-stuff/build-artifacts/*

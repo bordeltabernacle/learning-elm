@@ -6,12 +6,26 @@ import Html.Events exposing (..)
 
 import String exposing (toUpper, repeat, trimRight)
 
+-- MODEL
+
 newEntry phrase points id =
   { phrase = phrase,
     points = points,
     wasSpoken = False,
     id = id
   }
+
+initialModel =
+  { entries =
+      [ newEntry "Doing Agile" 200 2,
+        newEntry "Network Automation" 400 4,
+        newEntry "Future-Proof" 100 1,
+        newEntry "In The Cloud" 300 3,
+        newEntry "RockStar Ninja" 500 5
+      ]
+  }
+
+-- VIEW
 
 title message times =
   message ++ " "
@@ -35,20 +49,17 @@ entryItem entry =
       span [ class "points" ] [ text (toString entry.points) ]
     ]
 
-entryList =
-  ul [ ]
-    [ entryItem (newEntry "Future-Proof" 100 1),
-      entryItem (newEntry "Doing Agile" 200 2),
-      entryItem (newEntry "Network Automation" 250 3)
-    ]
+entryList entries =
+  ul [ ] (List.map entryItem entries)
 
-view =
+view model =
   div [ id "container" ]
     [ pageHeader
-    , entryList
+    , entryList model.entries
     , pageFooter
     ]
 
+-- WIRE IT ALL TOGETHER
 
 main =
-  view
+  view initialModel

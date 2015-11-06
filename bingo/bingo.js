@@ -299,6 +299,13 @@ Elm.Bingo.make = function (_elm) {
                    _L.fromArray([$Html$Attributes.$class("points")]),
                    _L.fromArray([$Html.text($Basics.toString(entry.points))]))]));
    };
+   var entryList = function (entries) {
+      return A2($Html.ul,
+      _L.fromArray([]),
+      A2($List.map,
+      entryItem,
+      entries));
+   };
    var pageFooter = A2($Html.footer,
    _L.fromArray([]),
    _L.fromArray([A2($Html.a,
@@ -315,6 +322,13 @@ Elm.Bingo.make = function (_elm) {
    _L.fromArray([A2(title,
    "bingo!",
    3)]));
+   var view = function (model) {
+      return A2($Html.div,
+      _L.fromArray([$Html$Attributes.id("container")]),
+      _L.fromArray([pageHeader
+                   ,entryList(model.entries)
+                   ,pageFooter]));
+   };
    var newEntry = F3(function (phrase,
    points,
    id) {
@@ -324,28 +338,31 @@ Elm.Bingo.make = function (_elm) {
              ,points: points
              ,wasSpoken: false};
    });
-   var entryList = A2($Html.ul,
-   _L.fromArray([]),
-   _L.fromArray([entryItem(A3(newEntry,
-                "Future-Proof",
-                100,
-                1))
-                ,entryItem(A3(newEntry,
-                "Doing Agile",
-                200,
-                2))
-                ,entryItem(A3(newEntry,
-                "Network Automation",
-                250,
-                3))]));
-   var view = A2($Html.div,
-   _L.fromArray([$Html$Attributes.id("container")]),
-   _L.fromArray([pageHeader
-                ,entryList
-                ,pageFooter]));
-   var main = view;
+   var initialModel = {_: {}
+                      ,entries: _L.fromArray([A3(newEntry,
+                                             "Doing Agile",
+                                             200,
+                                             2)
+                                             ,A3(newEntry,
+                                             "Network Automation",
+                                             400,
+                                             4)
+                                             ,A3(newEntry,
+                                             "Future-Proof",
+                                             100,
+                                             1)
+                                             ,A3(newEntry,
+                                             "In The Cloud",
+                                             300,
+                                             3)
+                                             ,A3(newEntry,
+                                             "RockStar Ninja",
+                                             500,
+                                             5)])};
+   var main = view(initialModel);
    _elm.Bingo.values = {_op: _op
                        ,newEntry: newEntry
+                       ,initialModel: initialModel
                        ,title: title
                        ,pageHeader: pageHeader
                        ,pageFooter: pageFooter
