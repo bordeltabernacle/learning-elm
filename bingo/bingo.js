@@ -284,10 +284,12 @@ Elm.Bingo.make = function (_elm) {
    $Basics = Elm.Basics.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $StartApp$Simple = Elm.StartApp.Simple.make(_elm),
    $String = Elm.String.make(_elm);
    var entryItem = function (entry) {
       return A2($Html.li,
@@ -322,13 +324,6 @@ Elm.Bingo.make = function (_elm) {
    _L.fromArray([A2(title,
    "bingo!",
    3)]));
-   var view = function (model) {
-      return A2($Html.div,
-      _L.fromArray([$Html$Attributes.id("container")]),
-      _L.fromArray([pageHeader
-                   ,entryList(model.entries)
-                   ,pageFooter]));
-   };
    var update = F2(function (action,
    model) {
       return function () {
@@ -343,10 +338,24 @@ Elm.Bingo.make = function (_elm) {
                                model.entries)]],
               model);}
          _U.badCase($moduleName,
-         "between lines 35 and 40");
+         "between lines 40 and 45");
       }();
    });
    var Sort = {ctor: "Sort"};
+   var view = F2(function (address,
+   model) {
+      return A2($Html.div,
+      _L.fromArray([$Html$Attributes.id("container")]),
+      _L.fromArray([pageHeader
+                   ,entryList(model.entries)
+                   ,A2($Html.button,
+                   _L.fromArray([$Html$Attributes.$class("sort")
+                                ,A2($Html$Events.onClick,
+                                address,
+                                Sort)]),
+                   _L.fromArray([$Html.text("Sort")]))
+                   ,pageFooter]));
+   });
    var NoOp = {ctor: "NoOp"};
    var newEntry = F3(function (phrase,
    points,
@@ -378,9 +387,10 @@ Elm.Bingo.make = function (_elm) {
                                              "RockStar Ninja",
                                              500,
                                              5)])};
-   var main = view(A2(update,
-   Sort,
-   initialModel));
+   var main = $StartApp$Simple.start({_: {}
+                                     ,model: initialModel
+                                     ,update: update
+                                     ,view: view});
    _elm.Bingo.values = {_op: _op
                        ,newEntry: newEntry
                        ,initialModel: initialModel
@@ -12822,6 +12832,63 @@ Elm.Signal.make = function (_elm) {
                         ,forwardTo: forwardTo
                         ,Mailbox: Mailbox};
    return _elm.Signal.values;
+};
+Elm.StartApp = Elm.StartApp || {};
+Elm.StartApp.Simple = Elm.StartApp.Simple || {};
+Elm.StartApp.Simple.make = function (_elm) {
+   "use strict";
+   _elm.StartApp = _elm.StartApp || {};
+   _elm.StartApp.Simple = _elm.StartApp.Simple || {};
+   if (_elm.StartApp.Simple.values)
+   return _elm.StartApp.Simple.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "StartApp.Simple",
+   $Basics = Elm.Basics.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var start = function (config) {
+      return function () {
+         var actions = $Signal.mailbox($Maybe.Nothing);
+         var address = A2($Signal.forwardTo,
+         actions.address,
+         $Maybe.Just);
+         var model = A3($Signal.foldp,
+         F2(function (_v0,model) {
+            return function () {
+               switch (_v0.ctor)
+               {case "Just":
+                  return A2(config.update,
+                    _v0._0,
+                    model);}
+               _U.badCase($moduleName,
+               "on line 91, column 34 to 60");
+            }();
+         }),
+         config.model,
+         actions.signal);
+         return A2($Signal.map,
+         config.view(address),
+         model);
+      }();
+   };
+   var Config = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,model: a
+             ,update: c
+             ,view: b};
+   });
+   _elm.StartApp.Simple.values = {_op: _op
+                                 ,Config: Config
+                                 ,start: start};
+   return _elm.StartApp.Simple.values;
 };
 Elm.String = Elm.String || {};
 Elm.String.make = function (_elm) {
