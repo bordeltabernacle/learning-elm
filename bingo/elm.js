@@ -328,7 +328,19 @@ Elm.Bingo.make = function (_elm) {
    model) {
       return function () {
          switch (action.ctor)
-         {case "NoOp": return model;
+         {case "Delete":
+            return function () {
+                 var remainingEntries = A2($List.filter,
+                 function (e) {
+                    return !_U.eq(e.id,
+                    action._0);
+                 },
+                 model.entries);
+                 return _U.replace([["entries"
+                                    ,remainingEntries]],
+                 model);
+              }();
+            case "NoOp": return model;
             case "Sort":
             return _U.replace([["entries"
                                ,A2($List.sortBy,
@@ -338,9 +350,13 @@ Elm.Bingo.make = function (_elm) {
                                model.entries)]],
               model);}
          _U.badCase($moduleName,
-         "between lines 40 and 45");
+         "between lines 41 and 53");
       }();
    });
+   var Delete = function (a) {
+      return {ctor: "Delete"
+             ,_0: a};
+   };
    var Sort = {ctor: "Sort"};
    var view = F2(function (address,
    model) {
@@ -396,6 +412,7 @@ Elm.Bingo.make = function (_elm) {
                        ,initialModel: initialModel
                        ,NoOp: NoOp
                        ,Sort: Sort
+                       ,Delete: Delete
                        ,update: update
                        ,title: title
                        ,pageHeader: pageHeader

@@ -35,6 +35,7 @@ initialModel =
 type Action
   = NoOp
   | Sort
+  | Delete Int
 
 update action model =
   case action of
@@ -43,6 +44,14 @@ update action model =
 
     Sort ->
       { model | entries <- List.sortBy .points model.entries }
+
+    Delete id ->
+      let
+        remainingEntries =
+          List.filter (\e -> e.id /= id) model.entries
+      in
+        { model | entries <- remainingEntries }
+
 
 -- VIEW
 
@@ -80,6 +89,7 @@ view address model =
       [ text "Sort" ]
     , pageFooter
     ]
+
 
 -- WIRE IT ALL TOGETHER
 
