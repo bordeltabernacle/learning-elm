@@ -282,6 +282,7 @@ Elm.Bingo.make = function (_elm) {
    _L = _N.List.make(_elm),
    $moduleName = "Bingo",
    $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $Html$Events = Elm.Html.Events.make(_elm),
@@ -291,23 +292,6 @@ Elm.Bingo.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $StartApp$Simple = Elm.StartApp.Simple.make(_elm),
    $String = Elm.String.make(_elm);
-   var entryItem = function (entry) {
-      return A2($Html.li,
-      _L.fromArray([]),
-      _L.fromArray([A2($Html.span,
-                   _L.fromArray([$Html$Attributes.$class("phrase")]),
-                   _L.fromArray([$Html.text(entry.phrase)]))
-                   ,A2($Html.span,
-                   _L.fromArray([$Html$Attributes.$class("points")]),
-                   _L.fromArray([$Html.text($Basics.toString(entry.points))]))]));
-   };
-   var entryList = function (entries) {
-      return A2($Html.ul,
-      _L.fromArray([]),
-      A2($List.map,
-      entryItem,
-      entries));
-   };
    var pageFooter = A2($Html.footer,
    _L.fromArray([]),
    _L.fromArray([A2($Html.a,
@@ -328,7 +312,22 @@ Elm.Bingo.make = function (_elm) {
    model) {
       return function () {
          switch (action.ctor)
-         {case "NoOp": return model;
+         {case "Delete":
+            return function () {
+                 var remainingEntries = A2($List.filter,
+                 function (e) {
+                    return !_U.eq(e.id,
+                    action._0);
+                 },
+                 model.entries);
+                 var _ = A2($Debug.log,
+                 "the remaining entries",
+                 remainingEntries);
+                 return _U.replace([["entries"
+                                    ,remainingEntries]],
+                 model);
+              }();
+            case "NoOp": return model;
             case "Sort":
             return _U.replace([["entries"
                                ,A2($List.sortBy,
@@ -338,7 +337,39 @@ Elm.Bingo.make = function (_elm) {
                                model.entries)]],
               model);}
          _U.badCase($moduleName,
-         "between lines 40 and 45");
+         "between lines 43 and 57");
+      }();
+   });
+   var Delete = function (a) {
+      return {ctor: "Delete"
+             ,_0: a};
+   };
+   var entryItem = F2(function (address,
+   entry) {
+      return A2($Html.li,
+      _L.fromArray([]),
+      _L.fromArray([A2($Html.span,
+                   _L.fromArray([$Html$Attributes.$class("phrase")]),
+                   _L.fromArray([$Html.text(entry.phrase)]))
+                   ,A2($Html.span,
+                   _L.fromArray([$Html$Attributes.$class("points")]),
+                   _L.fromArray([$Html.text($Basics.toString(entry.points))]))
+                   ,A2($Html.button,
+                   _L.fromArray([$Html$Attributes.$class("delete")
+                                ,A2($Html$Events.onClick,
+                                address,
+                                Delete(entry.id))]),
+                   _L.fromArray([]))]));
+   });
+   var entryList = F2(function (address,
+   entries) {
+      return function () {
+         var entryItems = A2($List.map,
+         entryItem(address),
+         entries);
+         return A2($Html.ul,
+         _L.fromArray([]),
+         entryItems);
       }();
    });
    var Sort = {ctor: "Sort"};
@@ -347,7 +378,9 @@ Elm.Bingo.make = function (_elm) {
       return A2($Html.div,
       _L.fromArray([$Html$Attributes.id("container")]),
       _L.fromArray([pageHeader
-                   ,entryList(model.entries)
+                   ,A2(entryList,
+                   address,
+                   model.entries)
                    ,A2($Html.button,
                    _L.fromArray([$Html$Attributes.$class("sort")
                                 ,A2($Html$Events.onClick,
@@ -396,6 +429,7 @@ Elm.Bingo.make = function (_elm) {
                        ,initialModel: initialModel
                        ,NoOp: NoOp
                        ,Sort: Sort
+                       ,Delete: Delete
                        ,update: update
                        ,title: title
                        ,pageHeader: pageHeader

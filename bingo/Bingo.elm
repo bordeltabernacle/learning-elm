@@ -6,6 +6,8 @@ import Html.Events exposing (..)
 
 import String exposing (toUpper, repeat, trimRight)
 
+import Debug
+
 import StartApp.Simple as StartApp
 
 
@@ -49,6 +51,8 @@ update action model =
       let
         remainingEntries =
           List.filter (\e -> e.id /= id) model.entries
+        _ =
+          Debug.log "the remaining entries" remainingEntries
       in
         { model | entries <- remainingEntries }
 
@@ -71,19 +75,25 @@ pageFooter =
         [ text "The Pragmatic Studio"]
     ]
 
-entryItem entry =
+entryItem address entry =
   li [ ]
-    [ span [ class "phrase" ] [ text entry.phrase ],
-      span [ class "points" ] [ text (toString entry.points) ]
+    [ span [ class "phrase" ] [ text entry.phrase ]
+    , span [ class "points" ] [ text (toString entry.points) ]
+    , button
+        [ class "delete", onClick address (Delete entry.id) ]
+        [ ]
     ]
 
-entryList entries =
-  ul [ ] (List.map entryItem entries)
+entryList address entries =
+  let
+    entryItems = List.map (entryItem address) entries
+  in
+    ul [ ] entryItems
 
 view address model =
   div [ id "container" ]
     [ pageHeader
-    , entryList model.entries
+    , entryList address model.entries
     , button
       [ class "sort", onClick address Sort ]
       [ text "Sort" ]
