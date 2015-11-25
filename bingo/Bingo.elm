@@ -12,6 +12,7 @@ import StartApp.Simple as StartApp
 
 
 -- MODEL
+newEntry : a -> b -> c -> { id : c, phrase : a, points : b, wasSpoken : Bool }
 
 newEntry phrase points id =
   { phrase = phrase,
@@ -20,6 +21,10 @@ newEntry phrase points id =
     id = id
   }
 
+initialModel :
+  { entries :
+      List { wasSpoken : Bool, id : Int, phrase : String, points : number }
+  }
 
 initialModel =
   { entries =
@@ -39,13 +44,18 @@ type Action
   | Sort
   | Delete Int
 
+update
+  : Action
+  -> { b | entries : List { a | id : Int, points : comparable } }
+  -> { b | entries : List { a | id : Int, points : comparable } }
+
 update action model =
   case action of
     NoOp ->
       model
 
     Sort ->
-      { model | entries <- List.sortBy .points model.entries }
+      { model | entries = List.sortBy .points model.entries }
 
     Delete id ->
       let
@@ -54,10 +64,12 @@ update action model =
         _ =
           Debug.log "the remaining entries" remainingEntries
       in
-        { model | entries <- remainingEntries }
+        { model | entries = remainingEntries }
 
 
 -- VIEW
+
+title : String -> Int -> Html
 
 title message times =
   message ++ " "
@@ -66,14 +78,23 @@ title message times =
   |> trimRight
   |> text
 
+pageHeader : Html
+
 pageHeader =
   h1 [ ] [ title "bingo!" 3 ]
+
+pageFooter : Html
 
 pageFooter =
   footer [ ]
     [ a [ href "http://pragmaticstudio.com" ]
         [ text "The Pragmatic Studio"]
     ]
+
+entryItem
+  : Signal.Address Action
+  -> { b | id : Int, phrase : String, points : a }
+  -> Html
 
 entryItem address entry =
   li [ ]
@@ -84,11 +105,21 @@ entryItem address entry =
         [ ]
     ]
 
+entryList
+  : Signal.Address Action
+  -> List { b | id : Int, phrase : String, points : a }
+  -> Html
+
 entryList address entries =
   let
     entryItems = List.map (entryItem address) entries
   in
     ul [ ] entryItems
+
+view
+  : Signal.Address Action
+  -> { c | entries : List { b | id : Int, phrase : String, points : a } }
+  -> Html
 
 view address model =
   div [ id "container" ]
@@ -103,11 +134,13 @@ view address model =
 
 -- WIRE IT ALL TOGETHER
 
+main : Signal Html
+
 main =
 --  initialModel
 --    |> update Sort
 --    |> view
-  
+
   StartApp.start
     { model = initialModel
     , view = view
