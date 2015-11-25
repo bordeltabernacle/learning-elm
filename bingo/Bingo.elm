@@ -43,11 +43,8 @@ type Action
   = NoOp
   | Sort
   | Delete Int
+  | Mark Int
 
-update
-  : Action
-  -> { b | entries : List { a | id : Int, points : comparable } }
-  -> { b | entries : List { a | id : Int, points : comparable } }
 
 update action model =
   case action of
@@ -66,6 +63,12 @@ update action model =
       in
         { model | entries = remainingEntries }
 
+    Mark id ->
+      let
+        updateEntry e =
+          if e.id == id then { e | wasSpoken = (not e.wasSpoken) } else e
+      in
+        { model | entries = List.map updateEntry model.entries }
 
 -- VIEW
 
@@ -91,13 +94,12 @@ pageFooter =
         [ text "The Pragmatic Studio"]
     ]
 
-entryItem
-  : Signal.Address Action
-  -> { b | id : Int, phrase : String, points : a }
-  -> Html
 
 entryItem address entry =
-  li [ ]
+  li
+    [ classList [ ("highlight", entry.wasSpoken) ]
+    , onClick address (Mark entry.id)
+    ]
     [ span [ class "phrase" ] [ text entry.phrase ]
     , span [ class "points" ] [ text (toString entry.points) ]
     , button
@@ -105,10 +107,6 @@ entryItem address entry =
         [ ]
     ]
 
-entryList
-  : Signal.Address Action
-  -> List { b | id : Int, phrase : String, points : a }
-  -> Html
 
 entryList address entries =
   let
@@ -116,10 +114,6 @@ entryList address entries =
   in
     ul [ ] entryItems
 
-view
-  : Signal.Address Action
-  -> { c | entries : List { b | id : Int, phrase : String, points : a } }
-  -> Html
 
 view address model =
   div [ id "container" ]
@@ -137,11 +131,8 @@ view address model =
 main : Signal Html
 
 main =
---  initialModel
---    |> update Sort
---    |> view
-
   StartApp.start
     { model = initialModel
     , view = view
-    , update = update }
+    , update = update
+    }
