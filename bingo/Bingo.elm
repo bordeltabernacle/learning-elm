@@ -60,6 +60,7 @@ type Action
   | Mark Int
   | UpdatePhraseInput String
   | UpdatePointsInput String
+  | Add
 
 update : Action -> Model -> Model
 update action model =
@@ -90,6 +91,22 @@ update action model =
     UpdatePointsInput contents ->
       { model | pointsInput = contents }
 
+    Add ->
+      let
+        entryToAdd =
+          newEntry model.phraseInput (Utils.parseInt model.pointsInput) model.nextID
+        isInvalid model =
+          String.isEmpty model.phraseInput || String.isEmpty model.pointsInput
+      in
+        if isInvalid model
+        then model
+        else
+          { model |
+              phraseInput = ""
+            , pointsInput = ""
+            , entries = entryToAdd :: model.entries
+            , nextID = model.nextID + 1
+          }
 
 -- VIEW
 
@@ -169,7 +186,8 @@ entryForm address model =
           ]
           [ ]
       , button
-          [ class "add" ] [ text "Add" ]
+          [ class "add"
+          , onClick address Add ] [ text "Add" ]
       , h2
           [ ]
           [ text (model.phraseInput ++ " " ++ model.pointsInput) ]
